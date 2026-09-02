@@ -78,3 +78,39 @@ input.addEventListener('input', updateSendButton);
 
 // Al cargar la página el campo está vacío, así que el botón arranca deshabilitado.
 updateSendButton();
+
+// Frases que los distintos contactos van enviando con el tiempo.
+const spontaneous = [
+  '¿Estás? 👀',
+  'Te mando una foto enseguida',
+  'Nos vemos mañana, ¿no?',
+  'Terminé el ejercicio de Grid',
+  '¿Cenamos algo el viernes?'
+];
+
+// setInterval repite un bloque de código cada cierto tiempo.
+// Cada 15 segundos, un contacto al azar escribe un mensaje nuevo.
+setInterval(() => {
+  const items = [...document.querySelectorAll('.chat-item')];
+  const item = items[Math.floor(Math.random() * items.length)];
+  const text = spontaneous[Math.floor(Math.random() * spontaneous.length)];
+
+  // La lista siempre muestra el último mensaje y su hora.
+  item.querySelector('.preview').textContent = text;
+  item.querySelector('.time').textContent = currentTime();
+
+  if (item.classList.contains('selected')) {
+    // Si es el chat abierto, la burbuja aparece en la conversación.
+    addBubble(text, 'in');
+  } else {
+    // Si es un chat cerrado, crece su contador de no leídos.
+    let badge = item.querySelector('.unread');
+    if (!badge) {
+      badge = document.createElement('span');
+      badge.className = 'unread';
+      badge.textContent = '0';
+      item.querySelector('.chat-bottom').appendChild(badge);
+    }
+    badge.textContent = Number(badge.textContent) + 1;
+  }
+}, 15000);
