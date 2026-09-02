@@ -20,16 +20,43 @@ function currentTime() {
 
 // Creamos una burbuja y la agregamos a la conversación.
 // El parámetro from recibe 'out' (propia) o 'in' (recibida).
-function addBubble(text, from = 'out') {
+// time llega al restaurar el historial; save indica si conviene guardarla.
+function addBubble(text, from = 'out', time = currentTime(), save = true) {
   const bubble = document.createElement('div');
   bubble.className = `bubble ${from}`;
   // Las burbujas propias incluyen el tilde de estado de entrega.
   const ticks = from === 'out' ? '<span class="ticks">✓</span>' : '';
-  bubble.innerHTML = `<p>${text}</p><span class="meta"><span class="time">${currentTime()}</span>${ticks}</span>`;
+  bubble.innerHTML = `<p>${text}</p><span class="meta"><span class="time">${time}</span>${ticks}</span>`;
   messages.appendChild(bubble);
   // La conversación siempre sigue al último mensaje, aunque tenga scroll.
   bubble.scrollIntoView({ block: 'end' });
+  // Cada mensaje nuevo se agrega al historial y se guarda en el navegador.
+  if (save) {
+    history.push({ text, from, time });
+    persist();
+  }
   return bubble;
+}
+
+// localStorage solo guarda texto: JSON convierte el arreglo ida y vuelta.
+let history = JSON.parse(localStorage.getItem('whatsapp-chat') || 'null');
+
+if (!history) {
+  // Si no hay nada guardado, usamos las burbujas del HTML como punto de partida.
+  history = [...messages.querySelectorAll('.bubble')].map(bubble => ({
+    text: bubble.querySelector('p').textContent,
+    from: bubble.classList.contains('out') ? 'out' : 'in',
+    time: bubble.querySelector('.time').textContent
+  }));
+} else {
+  // Si existe una conversación guardada, reemplaza a las burbujas del HTML.
+  messages.innerHTML = '<span class="day-divider">HOY</span>';
+  history.forEach(m => addBubble(m.text, m.from, m.time, false));
+}
+
+// Guardamos el historial completo para encontrarlo en la próxima visita.
+function persist() {
+  localStorage.setItem('whatsapp-chat', JSON.stringify(history));
 }
 
 // Los tildes avanzan como en WhatsApp real: enviado, entregado y leído.
