@@ -23,10 +23,21 @@ function currentTime() {
 function addBubble(text, from = 'out') {
   const bubble = document.createElement('div');
   bubble.className = `bubble ${from}`;
-  bubble.innerHTML = `<p>${text}</p><span class="meta"><span class="time">${currentTime()}</span></span>`;
+  // Las burbujas propias incluyen el tilde de estado de entrega.
+  const ticks = from === 'out' ? '<span class="ticks">✓</span>' : '';
+  bubble.innerHTML = `<p>${text}</p><span class="meta"><span class="time">${currentTime()}</span>${ticks}</span>`;
   messages.appendChild(bubble);
   // La conversación siempre sigue al último mensaje, aunque tenga scroll.
   bubble.scrollIntoView({ block: 'end' });
+  return bubble;
+}
+
+// Los tildes avanzan como en WhatsApp real: enviado, entregado y leído.
+// Cada setTimeout cambia una parte de la burbuja recién creada.
+function trackDelivery(bubble) {
+  const ticks = bubble.querySelector('.ticks');
+  setTimeout(() => { ticks.textContent = '✓✓'; }, 2000);
+  setTimeout(() => { ticks.classList.add('read'); }, 5000);
 }
 
 // Simulamos que el contacto está escribiendo y luego responde una frase al azar.
@@ -44,7 +55,7 @@ function simulateReply() {
 function sendMessage() {
   const text = input.value.trim();
   if (!text) return;
-  addBubble(text);
+  trackDelivery(addBubble(text));
   // Después de enviar, el campo queda vacío para el próximo mensaje.
   input.value = '';
   updateSendButton();
