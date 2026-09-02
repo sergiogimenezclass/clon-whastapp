@@ -16,9 +16,30 @@ function addBubble(text) {
   messages.appendChild(bubble);
 }
 
-// Escuchamos el clic del botón enviar.
-sendButton.addEventListener('click', () => {
-  addBubble(input.value);
+// Un mensaje vacío o con solo espacios nunca se envía.
+// trim() elimina los espacios sobrantes antes de decidir.
+function sendMessage() {
+  const text = input.value.trim();
+  if (!text) return;
+  addBubble(text);
   // Después de enviar, el campo queda vacío para el próximo mensaje.
   input.value = '';
+  updateSendButton();
+}
+
+// El botón permanece deshabilitado mientras no haya texto para enviar.
+function updateSendButton() {
+  sendButton.disabled = input.value.trim() === '';
+}
+
+sendButton.addEventListener('click', sendMessage);
+
+// Enter dentro del campo envía, sin romper el funcionamiento del botón.
+input.addEventListener('keydown', event => {
+  if (event.key === 'Enter') sendMessage();
 });
+
+input.addEventListener('input', updateSendButton);
+
+// Al cargar la página el campo está vacío, así que el botón arranca deshabilitado.
+updateSendButton();
