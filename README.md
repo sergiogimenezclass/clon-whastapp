@@ -60,7 +60,7 @@ El archivo `app.js` permite:
 - Escribir un mensaje y enviarlo con el botón o con la tecla Enter.
 - Validar que no se envíen mensajes vacíos.
 - Ver la burbuja propia alineada a la derecha, con la hora real.
-- Simular que el contacto está "escribiendo…" y responde solo.
+- Simular que el contacto está "escribiendo…" y responde solo, con tiempos que varían como los de una persona real.
 - Ver cómo los checks pasan de pendiendo a enviados y leídos.
 - Recibir mensajes espontáneos de otros contactos.
 - Contar los mensajes no leídos en la lista.
@@ -215,12 +215,14 @@ Quiero darle realismo al chat.
 
 Cuando el usuario envíe un mensaje, necesito que:
 
-1. En #chat-status aparezca el texto "escribiendo…" durante 2 segundos.
-2. Después de ese tiempo, se agregue una burbuja .bubble.in con una respuesta.
+1. Después de una pausa de entre 1 y 2 segundos, en #chat-status aparezca el texto "escribiendo…".
+2. La respuesta llegue después de otra pausa de entre 2 y 5 segundos.
 3. La respuesta se elija al azar desde un arreglo con al menos 5 frases.
 4. La burbuja de respuesta muestre también la hora actual.
 
-Usá setTimeout para el retraso. Explicame qué hace setTimeout y por qué la respuesta no aparece inmediatamente.
+Una persona real no contesta siempre a la misma velocidad: los tiempos tienen que salir de Math.random() y variar en cada mensaje.
+
+Usá setTimeout para los retrasos. Explicame qué hace setTimeout y cómo encadenaste la pausa de lectura con la de escritura.
 
 No modifiques el HTML ni el CSS existente.
 ```
@@ -229,7 +231,8 @@ No modifiques el HTML ni el CSS existente.
 
 - "escribiendo…" aparece y desaparece.
 - La respuesta llega unos segundos después.
-- Las respuestas varían entre un mensaje y otro.
+- El tiempo de respuesta varía de un mensaje a otro.
+- Las frases de respuesta varían entre un mensaje y otro.
 
 ## Prompt 5: los checks de estado
 

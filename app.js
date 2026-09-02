@@ -105,16 +105,24 @@ function trackDelivery(bubble) {
   setTimeout(() => { ticks.classList.add('read'); }, 5000);
 }
 
-// Simulamos que el contacto está escribiendo y luego responde una frase al azar.
-// setTimeout retrasa la ejecución: el código de adentro corre 2 segundos después.
-// Guardamos a qué chat pertenece la respuesta, aunque el usuario cambie de conversación.
+// Simulamos que el contacto lee, piensa y contesta como una persona real:
+// nadie responde siempre a la misma velocidad, así que los tiempos son al azar.
+// setTimeout retrasa la ejecución: el código de adentro corre después del tiempo indicado.
 function simulateReply() {
   const chat = currentChat;
-  chatStatus.textContent = 'escribiendo…';
+  // Pausa de lectura: entre 1 y 2 segundos antes de ponerse a escribir.
+  const reading = Math.round(1000 + Math.random() * 1000);
+  // Pausa de escritura: entre 2 y 5 segundos hasta que llega la respuesta.
+  const typing = Math.round(2000 + Math.random() * 3000);
+  // Primero esperamos la lectura; recién después avisa que está escribiendo.
   setTimeout(() => {
-    addBubble(replies[Math.floor(Math.random() * replies.length)], 'in', chat);
-    if (chat === currentChat) chatStatus.textContent = 'en línea';
-  }, 2000);
+    if (chat === currentChat) chatStatus.textContent = 'escribiendo…';
+    // La respuesta va al chat que la originó, aunque el usuario cambie de conversación.
+    setTimeout(() => {
+      addBubble(replies[Math.floor(Math.random() * replies.length)], 'in', chat);
+      if (chat === currentChat) chatStatus.textContent = 'en línea';
+    }, typing);
+  }, reading);
 }
 
 // Un mensaje vacío o con solo espacios nunca se envía.
