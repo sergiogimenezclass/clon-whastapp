@@ -14,6 +14,8 @@ function addBubble(text) {
   bubble.className = 'bubble out';
   bubble.innerHTML = `<p>${text}</p><span class="meta"><span class="time">${currentTime()}</span></span>`;
   messages.appendChild(bubble);
+  // La conversación siempre sigue al último mensaje, aunque tenga scroll.
+  bubble.scrollIntoView({ block: 'end' });
 }
 
 // Un mensaje vacío o con solo espacios nunca se envía.
