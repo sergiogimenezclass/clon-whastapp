@@ -33,6 +33,7 @@ El archivo `index.html` contiene los elementos de la aplicación:
 - La ventana de conversación con su cabecera.
 - Las burbujas de mensajes recibidos y enviados.
 - La barra de escritura con el botón de enviar.
+- El botón para volver a la lista, visible solo en celulares.
 
 ### CSS: el diseño
 
@@ -63,6 +64,8 @@ El archivo `app.js` permite:
 - Ver cómo los checks pasan de pendiendo a enviados y leídos.
 - Recibir mensajes espontáneos de otros contactos.
 - Contar los mensajes no leídos en la lista.
+- Cambiar de conversación al tocar otro chat de la lista.
+- Volver a la lista desde el botón ← en celulares.
 - Conservar las conversaciones después de recargar la página.
 
 ## 📁 Archivos del proyecto
@@ -96,6 +99,7 @@ Para que JavaScript encuentre cada parte de la interfaz, la maqueta usa estos id
 | Estado del contacto (en línea / escribiendo…) | `#chat-status` |
 | Campo de escritura | `#message-input` |
 | Botón enviar | `#send-btn` |
+| Botón volver a la lista (solo celulares) | `.back-btn` |
 | Burbuja enviada / recibida | `.bubble.out` / `.bubble.in` |
 | Ítem de la lista de chats | `.chat-item` |
 | Badge de no leídos de cada chat | `.unread` |
@@ -280,6 +284,40 @@ Si todavía no existen datos guardados, comenzá con un arreglo vacío.
 Explicame qué hacen JSON.stringify y JSON.parse y cómo puedo borrar los datos guardados para repetir las pruebas.
 ```
 
+## Prompt 8: cambiar de conversación
+
+```text
+Ahora quiero poder cambiar de conversación.
+
+Cuando el usuario haga clic en un .chat-item de la lista:
+
+- Ese chat queda con la clase .selected y los demás la pierden.
+- El avatar y #chat-title de la cabecera muestran los datos del contacto elegido.
+- #chat-status vuelve a "en línea".
+- Su badge .unread desaparece, porque los mensajes ya se leyeron.
+- #chat-messages muestra la conversación de ese contacto.
+
+Los mensajes se guardan por contacto usando su data-id.
+La clave whatsapp-chat pasa a guardar un objeto con una entrada por contacto.
+Si un contacto no tiene mensajes guardados, su conversación arranca vacía;
+las burbujas que ya estaban en el HTML son el punto de partida del chat seleccionado.
+
+En celulares la maqueta oculta .conversation: al tocar un chat, agregá la clase chat-open a .app para que la conversación ocupe la pantalla, y hacé que el botón .back-btn la quite para volver a la lista.
+
+Explicame cómo hiciste para que la respuesta de un contacto no termine en otro chat si el usuario cambia de conversación mientras escribe.
+
+No modifiques el HTML ni el CSS existente.
+```
+
+### Qué hay que comprobar
+
+- Al tocar otro chat cambian la foto y el nombre de la cabecera.
+- La conversación mostrada es la del chat elegido.
+- El badge de no leídos desaparece al abrir ese chat.
+- Lo que se escribe queda guardado en el chat correcto.
+- Cada chat conserva su propia conversación al recargar.
+- En celulares, la conversación ocupa la pantalla y el botón ← vuelve a la lista.
+
 ## 🧪 Probar también es parte del trabajo
 
 Después de recibir código de una IA, no alcanza con copiarlo y pegarlo. Hay que comprobar si realmente resuelve la consigna.
@@ -294,7 +332,9 @@ Realicen estas pruebas:
 6. Observar los checks de un mensaje propio.
 7. Dejar la página abierta y ver llegar mensajes espontáneos.
 8. Recargar la página y comprobar que los mensajes siguen.
-9. Probar todo en una ventana chica, como un celular.
+9. Abrir otro chat, escribirle y volver al primero.
+10. Comprobar que cada conversación quedó en su chat.
+11. Probar todo en una ventana chica, como un celular.
 
 Si algo falla, describan el problema con precisión. Por ejemplo:
 
@@ -325,7 +365,6 @@ La IA puede generar código rápidamente, pero ustedes deben poder responder:
 
 Cuando el proyecto básico esté terminado, pueden pedirle a la IA que ayude a incorporar:
 
-- Cambiar de conversación al hacer clic en otro chat de la lista.
 - Un buscador que filtre los chats de la lista por nombre.
 - Separadores de fecha entre mensajes de días distintos.
 - Shift+Enter para escribir un mensaje de varias líneas.

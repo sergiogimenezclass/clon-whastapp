@@ -1,8 +1,13 @@
-// Seleccionamos los elementos que permiten escribir y enviar mensajes.
+// Seleccionamos los elementos que vamos a consultar o modificar.
+const app = document.querySelector('.app');
 const messages = document.querySelector('#chat-messages');
 const input = document.querySelector('#message-input');
 const sendButton = document.querySelector('#send-btn');
+const chatTitle = document.querySelector('#chat-title');
 const chatStatus = document.querySelector('#chat-status');
+const chatAvatar = document.querySelector('.chat-head .avatar');
+const chatList = document.querySelector('#chat-list');
+const backButton = document.querySelector('.back-btn');
 
 // Frases posibles con las que responde el contacto.
 const replies = [
@@ -18,42 +23,78 @@ function currentTime() {
   return new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
 }
 
-// Creamos una burbuja y la agregamos a la conversación.
-// El parámetro from recibe 'out' (propia) o 'in' (recibida).
-// time llega al restaurar el historial; save indica si conviene guardarla.
-function addBubble(text, from = 'out', time = currentTime(), save = true) {
+// localStorage solo guarda texto:
+// - JSON.stringify convierte el objeto a texto para poder guardarlo.
+// - JSON.parse convierte ese texto de vuelta a objeto para poder usarlo.
+// Guardamos una conversación por contacto, identificada por su data-id.
+// Para borrar los datos y repetir las pruebas: localStorage.removeItem('whatsapp-chat') en la consola.
+let conversations = JSON.parse(localStorage.getItem('whatsapp-chat') || '{}');
+
+// Las versiones anteriores guardaban una sola conversación (un arreglo).
+// Si aparece ese formato, arrancamos de nuevo con el objeto por contacto.
+if (Array.isArray(conversations)) conversations = {};
+
+// El chat que viene seleccionado en el HTML es el que abre al cargar la página.
+let currentChat = document.querySelector('.chat-item.selected').dataset.id;
+
+// Guardamos todas las conversaciones para encontrarlas en la próxima visita.
+function persist() {
+  localStorage.setItem('whatsapp-chat', JSON.stringify(conversations));
+}
+
+// Creamos la burbuja en pantalla y la agregamos a la conversación visible.
+// El campo from recibe 'out' (propia) o 'in' (recibida).
+// isNew distingue un mensaje recién enviado de uno restaurado del historial.
+function renderBubble(m, isNew) {
   const bubble = document.createElement('div');
-  bubble.className = `bubble ${from}`;
-  // Las burbujas propias incluyen el tilde de estado de entrega.
-  const ticks = from === 'out' ? '<span class="ticks">✓</span>' : '';
-  bubble.innerHTML = `<p>${text}</p><span class="meta"><span class="time">${time}</span>${ticks}</span>`;
+  bubble.className = `bubble ${m.from}`;
+  // Las burbujas propias muestran el tilde de entrega:
+  // las nuevas arrancan con un solo tilde; las restauradas ya fueron leídas.
+  let ticks = '';
+  if (m.from === 'out') {
+    ticks = isNew ? '<span class="ticks">✓</span>' : '<span class="ticks read">✓✓</span>';
+  }
+  bubble.innerHTML = `<p>${m.text}</p><span class="meta"><span class="time">${m.time}</span>${ticks}</span>`;
   messages.appendChild(bubble);
   // La conversación siempre sigue al último mensaje, aunque tenga scroll.
   bubble.scrollIntoView({ block: 'end' });
-  // Cada mensaje nuevo se agrega al historial y se guarda en el navegador.
-  if (save) {
-    history.push({ text, from, time });
-    persist();
-  }
   return bubble;
 }
 
-// localStorage solo guarda texto:
-// - JSON.stringify convierte el arreglo a texto para poder guardarlo.
-// - JSON.parse convierte ese texto de vuelta a arreglo para poder usarlo.
-// Si todavía no existen datos guardados, comenzamos con un arreglo vacío.
-// Para borrar los datos y repetir las pruebas: localStorage.removeItem('whatsapp-chat') en la consola.
-let history = JSON.parse(localStorage.getItem('whatsapp-chat') || '[]');
-
-// Si existe una conversación guardada, reemplaza a las burbujas del HTML.
-if (history.length) {
-  messages.innerHTML = '<span class="day-divider">HOY</span>';
-  history.forEach(m => addBubble(m.text, m.from, m.time, false));
+// Agregamos un mensaje a la conversación de un contacto y lo guardamos.
+function saveMessage(chat, text, from, time) {
+  if (!conversations[chat]) conversations[chat] = [];
+  conversations[chat].push({ text, from, time });
+  persist();
 }
 
-// Guardamos el historial completo para encontrarlo en la próxima visita.
-function persist() {
-  localStorage.setItem('whatsapp-chat', JSON.stringify(history));
+// Guardamos el mensaje y lo mostramos, pero solo si ese chat está abierto.
+function addBubble(text, from, chat = currentChat) {
+  const time = currentTime();
+  saveMessage(chat, text, from, time);
+  if (chat !== currentChat) return null;
+  return renderBubble({ text, from, time }, true);
+}
+
+// Mostramos en pantalla la conversación completa de un contacto.
+function renderConversation(id) {
+  messages.innerHTML = '<span class="day-divider">HOY</span>';
+  (conversations[id] || []).forEach(m => renderBubble(m, false));
+  // Bajamos hasta el último mensaje.
+  const last = messages.lastElementChild;
+  if (last) last.scrollIntoView({ block: 'end' });
+}
+
+// Al cargar la página: si el chat abierto tiene conversación guardada,
+// reemplaza a las burbujas del HTML. Si no, esas burbujas son su punto de partida.
+if (conversations[currentChat]) {
+  renderConversation(currentChat);
+} else {
+  conversations[currentChat] = [...messages.querySelectorAll('.bubble')].map(bubble => ({
+    text: bubble.querySelector('p').textContent,
+    from: bubble.classList.contains('out') ? 'out' : 'in',
+    time: bubble.querySelector('.time').textContent
+  }));
 }
 
 // Los tildes avanzan como en WhatsApp real: enviado, entregado y leído.
@@ -66,11 +107,13 @@ function trackDelivery(bubble) {
 
 // Simulamos que el contacto está escribiendo y luego responde una frase al azar.
 // setTimeout retrasa la ejecución: el código de adentro corre 2 segundos después.
+// Guardamos a qué chat pertenece la respuesta, aunque el usuario cambie de conversación.
 function simulateReply() {
+  const chat = currentChat;
   chatStatus.textContent = 'escribiendo…';
   setTimeout(() => {
-    addBubble(replies[Math.floor(Math.random() * replies.length)], 'in');
-    chatStatus.textContent = 'en línea';
+    addBubble(replies[Math.floor(Math.random() * replies.length)], 'in', chat);
+    if (chat === currentChat) chatStatus.textContent = 'en línea';
   }, 2000);
 }
 
@@ -79,7 +122,7 @@ function simulateReply() {
 function sendMessage() {
   const text = input.value.trim();
   if (!text) return;
-  trackDelivery(addBubble(text));
+  trackDelivery(addBubble(text, 'out'));
   // Después de enviar, el campo queda vacío para el próximo mensaje.
   input.value = '';
   updateSendButton();
@@ -91,6 +134,26 @@ function updateSendButton() {
   sendButton.disabled = input.value.trim() === '';
 }
 
+// Abrimos la conversación de un contacto de la lista.
+function openChat(item) {
+  // Solo el chat elegido queda marcado como seleccionado.
+  document.querySelector('.chat-item.selected').classList.remove('selected');
+  item.classList.add('selected');
+  currentChat = item.dataset.id;
+  // La cabecera copia la foto, el nombre y el estado del nuevo contacto.
+  const listAvatar = item.querySelector('.avatar');
+  chatAvatar.className = listAvatar.className;
+  chatAvatar.textContent = listAvatar.textContent;
+  chatTitle.textContent = item.dataset.name;
+  chatStatus.textContent = 'en línea';
+  // Al abrir un chat, sus mensajes dejan de ser no leídos.
+  const badge = item.querySelector('.unread');
+  if (badge) badge.remove();
+  renderConversation(currentChat);
+  // En celulares, tocar un chat hace que la conversación ocupe la pantalla.
+  app.classList.add('chat-open');
+}
+
 sendButton.addEventListener('click', sendMessage);
 
 // Enter dentro del campo envía, sin romper el funcionamiento del botón.
@@ -99,6 +162,16 @@ input.addEventListener('keydown', event => {
 });
 
 input.addEventListener('input', updateSendButton);
+
+// Un solo evento en la lista detecta clics en cualquier chat,
+// incluidos los que JavaScript cree más adelante.
+chatList.addEventListener('click', event => {
+  const item = event.target.closest('.chat-item');
+  if (item) openChat(item);
+});
+
+// El botón volver, visible solo en celulares, regresa a la lista de chats.
+backButton.addEventListener('click', () => app.classList.remove('chat-open'));
 
 // Al cargar la página el campo está vacío, así que el botón arranca deshabilitado.
 updateSendButton();
@@ -124,11 +197,12 @@ setInterval(() => {
   item.querySelector('.preview').textContent = text;
   item.querySelector('.time').textContent = currentTime();
 
-  if (item.classList.contains('selected')) {
-    // Si es el chat abierto, la burbuja aparece en la conversación.
-    addBubble(text, 'in');
-  } else {
-    // Si es un chat cerrado, crece su contador de no leídos.
+  // El mensaje queda guardado en la conversación de ese contacto
+  // y se ve en pantalla solo si ese chat está abierto.
+  addBubble(text, 'in', item.dataset.id);
+
+  // Si es un chat cerrado, crece su contador de no leídos.
+  if (item.dataset.id !== currentChat) {
     let badge = item.querySelector('.unread');
     if (!badge) {
       badge = document.createElement('span');
