@@ -38,18 +38,15 @@ function addBubble(text, from = 'out', time = currentTime(), save = true) {
   return bubble;
 }
 
-// localStorage solo guarda texto: JSON convierte el arreglo ida y vuelta.
-let history = JSON.parse(localStorage.getItem('whatsapp-chat') || 'null');
+// localStorage solo guarda texto:
+// - JSON.stringify convierte el arreglo a texto para poder guardarlo.
+// - JSON.parse convierte ese texto de vuelta a arreglo para poder usarlo.
+// Si todavía no existen datos guardados, comenzamos con un arreglo vacío.
+// Para borrar los datos y repetir las pruebas: localStorage.removeItem('whatsapp-chat') en la consola.
+let history = JSON.parse(localStorage.getItem('whatsapp-chat') || '[]');
 
-if (!history) {
-  // Si no hay nada guardado, usamos las burbujas del HTML como punto de partida.
-  history = [...messages.querySelectorAll('.bubble')].map(bubble => ({
-    text: bubble.querySelector('p').textContent,
-    from: bubble.classList.contains('out') ? 'out' : 'in',
-    time: bubble.querySelector('.time').textContent
-  }));
-} else {
-  // Si existe una conversación guardada, reemplaza a las burbujas del HTML.
+// Si existe una conversación guardada, reemplaza a las burbujas del HTML.
+if (history.length) {
   messages.innerHTML = '<span class="day-divider">HOY</span>';
   history.forEach(m => addBubble(m.text, m.from, m.time, false));
 }
@@ -115,7 +112,8 @@ const spontaneous = [
   '¿Cenamos algo el viernes?'
 ];
 
-// setInterval repite un bloque de código cada cierto tiempo.
+// setInterval repite un bloque de código cada cierto tiempo,
+// mientras que setTimeout lo ejecuta una única vez y termina.
 // Cada 15 segundos, un contacto al azar escribe un mensaje nuevo.
 setInterval(() => {
   const items = [...document.querySelectorAll('.chat-item')];
