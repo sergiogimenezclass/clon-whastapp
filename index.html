@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clon de WhatsApp — Web</title>
+  <!-- Vinculamos la hoja de estilos externa con el documento HTML. -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- .app es el contenedor general: CSS usa Grid para repartir las tres columnas. -->
+  <div class="app">
+
+    <!-- Barra de iconos: Flexbox apila y centra cada botón. -->
+    <nav class="rail" aria-label="Navegación principal">
+      <div class="rail-avatar">S</div>
+      <a href="#" class="rail-btn" aria-label="Recientes">🕐</a>
+      <a href="#" class="rail-btn active" aria-label="Chats">💬</a>
+      <a href="#" class="rail-btn" aria-label="Estados">✨</a>
+      <a href="#" class="rail-btn" aria-label="Canales">📣</a>
+      <a href="#" class="rail-btn" aria-label="Comunidades">👥</a>
+      <!-- El empujón flex:1 deja la configuración pegada abajo. -->
+      <div class="spacer"></div>
+      <a href="#" class="rail-btn" aria-label="Configuración">⚙️</a>
+    </nav>
+
+    <!-- Columna central: lista de chats con su buscador. -->
+    <section class="chatlist" aria-label="Lista de chats">
+      <header class="list-head">
+        <div class="rail-avatar">S</div>
+        <div class="head-actions"><span class="icon-btn" aria-label="Comunidad">👥</span><span class="icon-btn" aria-label="Nuevo chat">✏️</span><span class="icon-btn" aria-label="Menú">⋮</span></div>
+      </header>
+
+      <!-- Este buscador quedará conectado con JavaScript en el desafío opcional. -->
+      <div class="search">
+        <input id="search" type="search" placeholder="Buscar" aria-label="Buscar chats">
+      </div>
+
+      <!-- Cada chat guarda su identificador y su nombre en atributos data-*. -->
+      <ul id="chat-list">
+        <li class="chat-item selected" data-id="lucas" data-name="Lucas">
+          <div class="avatar a1">L</div>
+          <div class="chat-info">
+            <div class="chat-top"><strong>Lucas</strong><span class="time">10:45</span></div>
+            <div class="chat-bottom"><span class="preview">Dale, lo miro hoy 👍</span></div>
+          </div>
+        </li>
+        <li class="chat-item" data-id="cami" data-name="Cami">
+          <div class="avatar a2">C</div>
+          <div class="chat-info">
+            <div class="chat-top"><strong>Cami</strong><span class="time">09:58</span></div>
+            <div class="chat-bottom"><span class="preview">¿Trajiste los apuntes?</span><span class="unread">2</span></div>
+          </div>
+        </li>
+        <li class="chat-item" data-id="trabajo" data-name="Trabajo">
+          <div class="avatar a3">T</div>
+          <div class="chat-info">
+            <div class="chat-top"><strong>Trabajo</strong><span class="time">Ayer</span></div>
+            <div class="chat-bottom"><span class="preview">Vale: mañana 9:30 la reunión</span></div>
+          </div>
+        </li>
+        <li class="chat-item" data-id="abuela" data-name="Abuela Rosa">
+          <div class="avatar a4">R</div>
+          <div class="chat-info">
+            <div class="chat-top"><strong>Abuela Rosa</strong><span class="time">Ayer</span></div>
+            <div class="chat-bottom"><span class="preview">Comí bien, mijo ❤️</span><span class="unread">1</span></div>
+          </div>
+        </li>
+        <li class="chat-item" data-id="grupo-diseno" data-name="Diseño Web">
+          <div class="avatar a5">👥</div>
+          <div class="chat-info">
+            <div class="chat-top"><strong>Diseño Web</strong><span class="time">Lun</span></div>
+            <div class="chat-bottom"><span class="preview">Profe: no olviden la entrega</span></div>
+          </div>
+        </li>
+        <li class="chat-item" data-id="mati" data-name="Mati">
+          <div class="avatar a6">M</div>
+          <div class="chat-info">
+            <div class="chat-top"><strong>Mati</strong><span class="time">Lun</span></div>
+            <div class="chat-bottom"><span class="preview">Juguemos al fútbol el sábado</span></div>
+          </div>
+        </li>
+        <li class="chat-item" data-id="vale" data-name="Vale">
+          <div class="avatar a7">V</div>
+          <div class="chat-info">
+            <div class="chat-top"><strong>Vale</strong><span class="time">22/08</span></div>
+            <div class="chat-bottom"><span class="preview">Mira este reel 😂</span></div>
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <!-- Columna derecha: conversación abierta con Lucas. -->
+    <section class="conversation" aria-label="Conversación">
+
+      <!-- Cabecera: Flexbox alinea foto, nombre, estado e íconos. -->
+      <header class="chat-head">
+        <div class="avatar a1">L</div>
+        <div class="who">
+          <h2 id="chat-title">Lucas</h2>
+          <p id="chat-status">en línea</p>
+        </div>
+        <div class="head-actions"><span class="icon-btn" aria-label="Videollamada">📹</span><span class="icon-btn" aria-label="Llamada">📞</span><span class="icon-btn" aria-label="Menú">⋮</span></div>
+      </header>
+
+      <!-- JavaScript creará burbujas nuevas dentro de #chat-messages. -->
+      <div id="chat-messages">
+        <span class="day-divider">HOY</span>
+
+        <!-- .bubble.in llega de izquierda, con fondo blanco. -->
+        <div class="bubble in"><p>¿Viste el ejercicio de Grid del curso?</p><span class="meta"><span class="time">10:30</span></span></div>
+
+        <!-- .bubble.out es propia, verde y con tilde de estado. -->
+        <div class="bubble out"><p>Sí, lo empecé anoche 😄</p><span class="meta"><span class="time">10:32</span><span class="ticks read">✓✓</span></span></div>
+
+        <div class="bubble in"><p>Yo me trabé con las tres columnas, me queda todo choto</p><span class="meta"><span class="time">10:33</span></span></div>
+
+        <div class="bubble out"><p>Probá con grid-template-columns: 64px 30% auto, es lo mismo que hizo el profe</p><span class="meta"><span class="time">10:41</span><span class="ticks read">✓✓</span></span></div>
+
+        <div class="bubble in"><p>Genio, lo pruebo esta tarde</p><span class="meta"><span class="time">10:44</span></span></div>
+
+        <div class="bubble out"><p>Dale, cualquier cosa me avisás</p><span class="meta"><span class="time">10:45</span><span class="ticks">✓✓</span></span></div>
+      </div>
+
+      <!-- Barra de escritura: el input crece con flex:1 y el botón queda a la derecha. -->
+      <footer class="composer">
+        <span class="composer-icon" aria-hidden="true">😊</span>
+        <input id="message-input" type="text" placeholder="Escriba un mensaje" autocomplete="off" aria-label="Escribir mensaje">
+        <span class="composer-icon" aria-hidden="true">📎</span>
+        <button id="send-btn" aria-label="Enviar mensaje">➤</button>
+      </footer>
+    </section>
+  </div>
+
+  <!-- El script se carga al final para que el HTML ya exista cuando se ejecute. -->
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,451 @@
+/* El selector universal aplica el modelo de caja más fácil de calcular. */
+* {
+    box-sizing: border-box;
+}
+
+/* Con altura al 100%, la aplicación ocupa toda la ventana sin usar vh. */
+html,
+body {
+    height: 100%;
+}
+
+/* Estilos generales: la tipografía clásica de WhatsApp Web. */
+body {
+    margin: 0;
+    font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    color: #111b21;
+    background: #d1d7db;
+}
+
+/* LAYOUT GENERAL EN GRID: barra de iconos + lista de chats + conversación. */
+.app {
+    display: grid;
+    grid-template-columns: 64px 30% auto;
+    height: 100%;
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+/* ───────────────────────── Barra de iconos ───────────────────────── */
+
+/* Como componente, la barra usa Flexbox en columna. */
+.rail {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 0;
+    background: #f0f2f5;
+    border-right: 1px solid #d1d7db;
+}
+
+/* Foto de perfil: un círculo con la inicial del usuario. */
+.rail-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #6a5ae0;
+    color: #fff;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.rail-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 19px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.rail-btn:hover {
+    background: #e4e6e8;
+}
+
+/* El icono activo imita al de WhatsApp: círculo gris con tinte verde. */
+.rail-btn.active {
+    background: #dde5ea;
+}
+
+/* flex:1 empuja el engranaje hacia el pie de la barra. */
+.spacer {
+    flex: 1;
+}
+
+/* ───────────────────────── Lista de chats ───────────────────────── */
+
+/* La columna es un Flexbox en columna: cabecera, buscador y lista. */
+.chatlist {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    background: #fff;
+    border-right: 1px solid #d1d7db;
+}
+
+.list-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    background: #f0f2f5;
+}
+
+/* Fila de íconos reutilizable (arriba de la lista y en la conversación). */
+.head-actions {
+    display: flex;
+    gap: 16px;
+    font-size: 18px;
+    color: #54656f;
+}
+
+.icon-btn {
+    cursor: pointer;
+}
+
+.search {
+    padding: 8px 12px;
+    background: #fff;
+}
+
+/* El buscador ocupa todo el ancho disponible con flex. */
+#search {
+    width: 100%;
+    min-height: 36px;
+    padding: 0 14px;
+    border: 0;
+    border-radius: 8px;
+    background: #f0f2f5;
+    font: inherit;
+    color: #111b21;
+}
+
+/* overflow-y permite que la lista crezca y se desplace internamente. */
+#chat-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    flex: 1;
+    overflow-y: auto;
+}
+
+/* Cada chat es un Flexbox: foto + información. */
+.chat-item {
+    display: flex;
+    gap: 12px;
+    padding: 10px 14px;
+    cursor: pointer;
+}
+
+.chat-item:hover {
+    background: #f5f6f6;
+}
+
+/* El chat abierto se resalta, igual que en WhatsApp. */
+.chat-item.selected {
+    background: #f0f2f5;
+}
+
+/* hidden lo usará JavaScript para filtrar chats por búsqueda. */
+.chat-item[hidden] {
+    display: none;
+}
+
+/* Avatar circular con inicial o emoji; flex lo centra por dentro. */
+.avatar {
+    width: 49px;
+    height: 49px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 17px;
+    font-weight: 700;
+}
+
+/* Paleta de fotos de perfil, al estilo de los colores de WhatsApp. */
+.a1 { background: #e17076; }
+.a2 { background: #67b5dc; }
+.a3 { background: #7bc862; }
+.a4 { background: #dfb5ce; }
+.a5 { background: #00a884; }
+.a6 { background: #c39be0; }
+.a7 { background: #e9a46a; }
+
+/* La info ocupa el resto del ancho; min-width:0 permite recortar el texto. */
+.chat-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e9edef;
+}
+
+/* Primera fila: nombre a la izquierda, hora a la derecha. */
+.chat-top {
+    display: flex;
+    justify-content: space-between;
+}
+
+.chat-top strong {
+    font-size: 16px;
+    font-weight: 400;
+}
+
+.time {
+    font-size: 12px;
+    color: #667781;
+    white-space: nowrap;
+}
+
+/* Segunda fila: último mensaje y badge de no leídos. */
+.chat-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Los tres puntos suspensivos aparecen cuando el mensaje no entra. */
+.preview {
+    font-size: 13px;
+    color: #667781;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Círculo verde con el contador de mensajes sin leer. */
+.unread {
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: 99px;
+    background: #00a884;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ───────────────────────── Conversación ───────────────────────── */
+
+/* Tercera columna: cabecera arriba, mensajes en el medio, escritura abajo. */
+.conversation {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    background: #efeae2;
+}
+
+.chat-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 16px;
+    background: #f0f2f5;
+}
+
+/* El bloque nombre + estado crece para empujar los íconos a la derecha. */
+.who {
+    flex: 1;
+    min-width: 0;
+}
+
+#chat-title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+#chat-status {
+    margin: 0;
+    font-size: 13px;
+    color: #667781;
+}
+
+/* flex:1 hace que los mensajes ocupen todo el alto que queda y haya scroll. */
+#chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 20px 8% 24px;
+}
+
+/* Escuelita celeste centrada que separa los mensajes por día. */
+.day-divider {
+    align-self: center;
+    padding: 5px 12px;
+    border-radius: 8px;
+    background: #e1f2fb;
+    color: #54656f;
+    font-size: 12px;
+    text-transform: uppercase;
+    box-shadow: 0 1px 1px rgba(11, 20, 26, .10);
+}
+
+/* La burbuja es un Flexbox: texto que crece + hora y tildes a la derecha. */
+.bubble {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    max-width: 65%;
+    padding: 6px 8px 7px 9px;
+    border-radius: 8px;
+    box-shadow: 0 1px 1px rgba(11, 20, 26, .12);
+}
+
+.bubble p {
+    flex: 1;
+    margin: 0;
+    font-size: 14px;
+    line-height: 145%;
+}
+
+/* Fila de metadatos: hora y checks siempre juntos, sin cortarse. */
+.meta {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    color: #667781;
+    white-space: nowrap;
+}
+
+/* Recibida: blanca y pegada a la izquierda. */
+.bubble.in {
+    align-self: flex-start;
+    background: #fff;
+    border-top-left-radius: 0;
+}
+
+/* Enviada: verde y pegada a la derecha. */
+.bubble.out {
+    align-self: flex-end;
+    background: #d9fdd3;
+    border-top-right-radius: 0;
+}
+
+/* La colita se dibuja con un triangulito recortado con clip-path. */
+.bubble.in::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -8px;
+    width: 8px;
+    height: 8px;
+    background: #fff;
+    clip-path: polygon(100% 0, 100% 100%, 0 0);
+}
+
+.bubble.out::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: -8px;
+    width: 8px;
+    height: 8px;
+    background: #d9fdd3;
+    clip-path: polygon(0 0, 100% 0, 0 100%);
+}
+
+/* Tildes grises (entregado) y azules (leído), como en WhatsApp. */
+.ticks {
+    color: #667781;
+}
+
+.ticks.read {
+    color: #53bdeb;
+}
+
+/* ───────────────────── Barra de escritura ───────────────────── */
+
+.composer {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 16px;
+    background: #f0f2f5;
+}
+
+.composer-icon {
+    font-size: 22px;
+    color: #54656f;
+    cursor: pointer;
+}
+
+/* El campo crece con flex:1; el botón redondo queda al final. */
+#message-input {
+    flex: 1;
+    min-height: 42px;
+    padding: 10px 14px;
+    border: 0;
+    border-radius: 8px;
+    background: #fff;
+    font: inherit;
+    color: #111b21;
+}
+
+#send-btn {
+    width: 42px;
+    height: 42px;
+    border: 0;
+    border-radius: 50%;
+    background: #00a884;
+    color: #fff;
+    font-size: 17px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#send-btn:hover {
+    background: #008f72;
+}
+
+/* Estado que JavaScript activará cuando el campo esté vacío. */
+#send-btn:disabled {
+    opacity: .45;
+    cursor: not-allowed;
+}
+
+/* ───────────────────────── Adaptaciones ───────────────────────── */
+
+/* En tablets se oculta la barra de iconos y la lista ocupa más lugar. */
+@media (max-width:800px) {
+    .app {
+        grid-template-columns: 45% auto;
+    }
+
+    .rail {
+        display: none;
+    }
+}
+
+/* En celulares solo se ve la lista; JavaScript mostrará la
+   conversación cuando el usuario toque un chat. */
+@media (max-width:560px) {
+    .app {
+        grid-template-columns: 100%;
+    }
+
+    .conversation {
+        display: none;
+    }
+}
