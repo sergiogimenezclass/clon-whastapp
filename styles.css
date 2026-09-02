@@ -264,6 +264,21 @@ body {
     min-width: 0;
 }
 
+/* Botón volver de la cabecera: oculto en pantallas grandes. */
+.back-btn {
+    display: none;
+    width: 36px;
+    height: 36px;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    font-size: 20px;
+    color: #54656f;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+}
+
 #chat-title {
     margin: 0;
     font-size: 16px;
@@ -438,8 +453,9 @@ body {
     }
 }
 
-/* En celulares solo se ve la lista; JavaScript mostrará la
-   conversación cuando el usuario toque un chat. */
+/* En celulares solo se ve la lista; JavaScript agrega la clase
+   chat-open a .app al tocar un chat: la lista se oculta y la
+   conversación pasa a ocupar la pantalla, con su botón volver. */
 @media (max-width:560px) {
     .app {
         grid-template-columns: 100%;
@@ -447,5 +463,14 @@ body {
 
     .conversation {
         display: none;
+    }
+
+    .app.chat-open .chatlist {
+        display: none;
+    }
+
+    .app.chat-open .conversation,
+    .app.chat-open .back-btn {
+        display: flex;
     }
 }
