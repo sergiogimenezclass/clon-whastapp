@@ -30,6 +30,7 @@ El archivo `index.html` contiene los elementos de la aplicación:
 - La barra lateral de iconos (estados, chats, canales…).
 - La lista de chats con buscador.
 - Cada chat de la lista: foto, nombre, último mensaje, hora y badge de no leídos.
+- Algunos avatars cargan una foto, un logo o un paisaje desde la carpeta `images/`.
 - La ventana de conversación con su cabecera.
 - Las burbujas de mensajes recibidos y enviados.
 - La barra de escritura con el botón de enviar.
@@ -75,6 +76,10 @@ clone-whatsapp/
 ├── index.html
 ├── styles.css
 ├── app.js
+├── images/
+│   ├── foto-abuela.svg
+│   ├── logo-trabajo.svg
+│   └── paisaje-vale.svg
 └── README.md
 ```
 
@@ -134,6 +139,7 @@ En `index.html` y `styles.css`, resuelvan los siguientes puntos:
 7. Usar el fondo `#efeae2` para la conversación y `#f0f2f5` para cabeceras y buscador.
 8. Diseñar el badge de no leídos como un círculo verde `#00a884`.
 9. Adaptar la página para pantallas pequeñas: en celular, primero la lista y al tocar un chat, la conversación.
+10. Cargar en algunos avatars una imagen propia (una foto, un logo o un paisaje) con la etiqueta `<img>`.
 
 ### En ambos caminos: la funcionalidad
 

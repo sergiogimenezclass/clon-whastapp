@@ -151,7 +151,8 @@ function openChat(item) {
   // La cabecera copia la foto, el nombre y el estado del nuevo contacto.
   const listAvatar = item.querySelector('.avatar');
   chatAvatar.className = listAvatar.className;
-  chatAvatar.textContent = listAvatar.textContent;
+  // innerHTML copia tanto la inicial de texto como la etiqueta <img> de las fotos.
+  chatAvatar.innerHTML = listAvatar.innerHTML;
   chatTitle.textContent = item.dataset.name;
   chatStatus.textContent = 'en línea';
   // Al abrir un chat, sus mensajes dejan de ser no leídos.

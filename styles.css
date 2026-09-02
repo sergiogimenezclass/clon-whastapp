@@ -157,7 +157,7 @@ body {
     display: none;
 }
 
-/* Avatar circular con inicial o emoji; flex lo centra por dentro. */
+/* Avatar circular con inicial, emoji o foto; flex lo centra por dentro. */
 .avatar {
     width: 49px;
     height: 49px;
@@ -169,6 +169,16 @@ body {
     color: #fff;
     font-size: 17px;
     font-weight: 700;
+}
+
+/* Las fotos cargadas con <img> ocupan todo el círculo del avatar.
+   object-fit: cover recorta la imagen para que no se deforme. */
+.avatar img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
 }
 
 /* Paleta de fotos de perfil, al estilo de los colores de WhatsApp. */
